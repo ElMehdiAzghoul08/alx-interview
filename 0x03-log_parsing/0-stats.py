@@ -3,42 +3,47 @@
 import sys
 
 
-def print_stats(total_size, status_codes):
+def print_stats(status_codes, total_size):
     """print_stats function"""
     print("File size: {}".format(total_size))
-    for code in sorted(status_codes.keys()):
-        if status_codes[code] > 0:
-            print("{}: {}".format(code, status_codes[code]))
+    for key, val in sorted(status_codes.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
 
 
-def main():
-    """main function"""
-    total_size = 0
-    status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-    count = 0
 
-    try:
-        for line in sys.stdin:
+total_size = 0
+status_codes = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0}
+code = 0
+count = 0
+
+try:
+    for line in sys.stdin:
+        parsed_line = line.split()
+        parsed_line = parsed_line[::-1]
+
+        if len(parsed_line) > 2:
             count += 1
-            try:
-                parts = line.split()
-                size = int(parts[-1])
-                code = int(parts[-2])
 
-                total_size += size
-                if code in status_codes:
+            if count <= 10:
+                total_size += int(parsed_line[0])
+                code = parsed_line[1]
+
+                if (code in status_codes.keys()):
                     status_codes[code] += 1
 
-                if count % 10 == 0:
-                    print_stats(total_size, status_codes)
-            except (ValueError, IndexError):
-                pass
+            if (count == 10):
+                print_stats(status_codes, total_size)
+                count = 0
 
-    except KeyboardInterrupt:
-        print_stats(total_size, status_codes)
-        print("", end="", flush=True)  # Print an empty line
-        raise
+finally:
+    print_stats(status_codes, total_size)
 
-
-if __name__ == "__main__":
-    main()
