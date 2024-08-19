@@ -11,8 +11,9 @@ def print_stats(status_codes, total_size):
             print("{}: {}".format(key, val))
 
 
-
 total_size = 0
+code = 0
+count = 0
 status_codes = {
     "200": 0,
     "301": 0,
@@ -22,8 +23,7 @@ status_codes = {
     "404": 0,
     "405": 0,
     "500": 0}
-code = 0
-count = 0
+
 
 try:
     for line in sys.stdin:
@@ -46,4 +46,3 @@ try:
 
 finally:
     print_stats(status_codes, total_size)
-
