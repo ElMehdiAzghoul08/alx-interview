@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+"""Module"""
 import sys
 
 
 def print_stats(total_size, status_codes):
+    """print_stats function"""
     print("File size:", total_size)
     for code in sorted(status_codes.keys()):
         if status_codes[code] > 0:
@@ -10,6 +12,7 @@ def print_stats(total_size, status_codes):
 
 
 def main():
+    """main function"""
     total_size = 0
     status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0,
                     404: 0, 405: 0, 500: 0}
