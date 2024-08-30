@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 """N Queens solver"""
+import sys
 
 
 def is_safe(board, row, col, n):
@@ -50,10 +51,10 @@ def nqueens(n):
     """Main N Queens solver"""
     if not isinstance(n, int):
         print("N must be a number")
-        exit(1)
+        sys.exit(1)
     if n < 4:
         print("N must be at least 4")
-        exit(1)
+        sys.exit(1)
 
     board = [[0 for _ in range(n)] for _ in range(n)]
     solutions = solve_nqueens(board, 0, n)
@@ -62,14 +63,12 @@ def nqueens(n):
 
 
 if __name__ == "__main__":
-    from sys import argv
-
-    if len(argv) != 2:
+    if len(sys.argv) != 2:
         print("Usage: nqueens N")
-        exit(1)
+        sys.exit(1)
     try:
-        N = int(argv[1])
-        nqueens(N)
+        n = int(sys.argv[1])
+        nqueens(n)
     except ValueError:
         print("N must be a number")
-        exit(1)
+        sys.exit(1)
