@@ -21,7 +21,7 @@ def is_safe(board, row, col, n):
     return True
 
 
-def solve_nqueens(board, col, n):
+def solve_nqueens(board, col, n, solutions):
     """Recursive backtracking solver"""
     if col >= n:
         solution = []
@@ -29,16 +29,17 @@ def solve_nqueens(board, col, n):
             for j in range(n):
                 if board[i][j] == 1:
                     solution.append([i, j])
-        return [solution]
+        solutions.append(solution)
+        return True
 
-    solutions = []
+    res = False
     for i in range(n):
         if is_safe(board, i, col, n):
             board[i][col] = 1
-            solutions.extend(solve_nqueens(board, col + 1, n))
+            res = solve_nqueens(board, col + 1, n, solutions) or res
             board[i][col] = 0
 
-    return solutions
+    return res
 
 
 def print_solutions(solutions):
@@ -57,8 +58,8 @@ def nqueens(n):
         sys.exit(1)
 
     board = [[0 for _ in range(n)] for _ in range(n)]
-    solutions = solve_nqueens(board, 0, n)
-    solutions.sort()
+    solutions = []
+    solve_nqueens(board, 0, n, solutions)
     print_solutions(solutions)
 
 
