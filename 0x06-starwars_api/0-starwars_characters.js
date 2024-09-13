@@ -1,7 +1,6 @@
 #!/usr/bin/node
 
-const https = require('https');
-
+const request = require('request');
 const movieId = process.argv[2];
 
 if (!movieId) {
@@ -11,26 +10,22 @@ if (!movieId) {
 
 const filmUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
 
-function httpsGet (url) {
+function requestGet (url) {
   return new Promise((resolve, reject) => {
-    https.get(url, (response) => {
-      let data = '';
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-      response.on('end', () => {
-        resolve(JSON.parse(data));
-      });
-    }).on('error', (error) => {
-      reject(error);
+    request(url, (error, response, body) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(JSON.parse(body));
+      }
     });
   });
 }
 
-httpsGet(filmUrl)
+requestGet(filmUrl)
   .then(film => {
     return film.characters.reduce((promise, url) => {
-      return promise.then(() => httpsGet(url))
+      return promise.then(() => requestGet(url))
         .then(character => console.log(character.name))
         .catch(error => console.error(`Failed to fetch character: ${error.message}`));
     }, Promise.resolve());
