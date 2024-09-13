@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+
 """N Queens solver"""
 import sys
 
