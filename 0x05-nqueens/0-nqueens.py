@@ -1,76 +1,53 @@
 #!/usr/bin/python3
-
-
-"""N Queens solver"""
+"""N-Queens problem solver"""
 import sys
 
 
-def is_safe(board, row, col, n):
-    """Check queen safety"""
-    for i in range(col):
-        if board[row][i] == 1:
-            return False
-
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
-    for i, j in zip(range(row, n, 1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
-    return True
-
-
-def solve_nqueens(board, col, n, solutions):
-    """Recursive backtracking solver"""
-    if col >= n:
-        solution = []
-        for i in range(n):
-            for j in range(n):
+def solve(row, size, cols, diag1, diag2, board):
+    """Find N-Queens solutions"""
+    if row == size:
+        result = []
+        for i in range(len(board)):
+            for j in range(len(board[i])):
                 if board[i][j] == 1:
-                    solution.append([i, j])
-        solutions.append(solution)
-        return True
+                    result.append([i, j])
+        print(result)
+        return
 
-    res = False
-    for i in range(n):
-        if is_safe(board, i, col, n):
-            board[i][col] = 1
-            res = solve_nqueens(board, col + 1, n, solutions) or res
-            board[i][col] = 0
-
-    return res
-
-
-def print_solutions(solutions):
-    """Print board solutions"""
-    for solution in solutions:
-        print(solution)
+    for col in range(size):
+        if col in cols or (row + col) in diag1 or (row - col) in diag2:
+            continue
+        cols.add(col)
+        diag1.add(row + col)
+        diag2.add(row - col)
+        board[row][col] = 1
+        solve(row+1, size, cols, diag1, diag2, board)
+        cols.remove(col)
+        diag1.remove(row + col)
+        diag2.remove(row - col)
+        board[row][col] = 0
 
 
-def nqueens(n):
-    """Main N Queens solver"""
-    if not isinstance(n, int):
-        print("N must be a number")
-        sys.exit(1)
-    if n < 4:
-        print("N must be at least 4")
-        sys.exit(1)
-
-    board = [[0 for _ in range(n)] for _ in range(n)]
-    solutions = []
-    solve_nqueens(board, 0, n, solutions)
-    print_solutions(solutions)
+def queens(size):
+    """Main solving function"""
+    cols = set()
+    diag1 = set()
+    diag2 = set()
+    board = [[0] * size for _ in range(size)]
+    solve(0, size, cols, diag1, diag2, board)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    args = sys.argv
+    if len(args) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
     try:
-        n = int(sys.argv[1])
-        nqueens(n)
+        n = int(args[1])
+        if n < 4:
+            print("N must be at least 4")
+            sys.exit(1)
+        queens(n)
     except ValueError:
         print("N must be a number")
         sys.exit(1)
