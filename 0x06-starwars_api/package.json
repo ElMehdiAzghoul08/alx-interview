@@ -11,5 +11,5 @@
   "dependencies": {
     "request": "^2.88.2"
   },
-  "description": ""
+  "description": "Star Wars API project"
 }

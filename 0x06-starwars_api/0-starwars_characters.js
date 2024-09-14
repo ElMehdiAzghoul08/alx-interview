@@ -1,35 +1,25 @@
 #!/usr/bin/node
-
 const request = require('request');
-const movieId = process.argv[2];
+const baseUrl = 'https://swapi-api.hbtn.io/api';
 
-if (!movieId) {
-  console.error('Please provide a movie ID as an argument');
-  process.exit(1);
-}
+if (process.argv.length > 2) {
+  request(`${baseUrl}/films/${process.argv[2]}/`, (error, response, filmData) => {
+    if (error) {
+      console.log(error);
+    }
+    const characterUrls = JSON.parse(filmData).characters;
+    const characterPromises = characterUrls.map(
+      url => new Promise((resolve, reject) => {
+        request(url, (charError, charResponse, charData) => {
+          if (charError) {
+            reject(charError);
+          }
+          resolve(JSON.parse(charData).name);
+        });
+      }));
 
-const filmUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}/`;
-
-function requestGet (url) {
-  return new Promise((resolve, reject) => {
-    request(url, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(JSON.parse(body));
-      }
-    });
+    Promise.all(characterPromises)
+      .then(characterNames => console.log(characterNames.join('\n')))
+      .catch(allErrors => console.log(allErrors));
   });
 }
-
-requestGet(filmUrl)
-  .then(film => {
-    return film.characters.reduce((promise, url) => {
-      return promise.then(() => requestGet(url))
-        .then(character => console.log(character.name))
-        .catch(error => console.error(`Failed to fetch character: ${error.message}`));
-    }, Promise.resolve());
-  })
-  .catch(error => {
-    console.error('Error:', error.message);
-  });
